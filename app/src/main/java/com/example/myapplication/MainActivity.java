@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,15 +58,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        handler.postDelayed(runnable, 0); // Start polling
+        startService(new Intent(this, GateService.class));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable); // Stop polling
+        stopService(new Intent(this, GateService.class));
     }
-
 
 
 
@@ -73,42 +73,9 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            pollServer();
             handler.postDelayed(this, 6000); // Poll every minute
         }
 
-        private void pollServer() {
-            OkHttpClient client = new OkHttpClient();
-
-            Request request = new Request.Builder()
-                    .url("https://shaar.onrender.com/michael")
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        throw new IOException("Unexpected code " + response);
-                    }
-
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response.body().string());
-                        String yoad = jsonResponse.getString("yoad");
-
-                        if (yoad.equals("open")) {
-                            GateCallHelper.initiateCall(MainActivity.this);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
 
     };
 
