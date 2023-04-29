@@ -98,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         JSONObject jsonResponse = new JSONObject(response.body().string());
-                        String yoad = jsonResponse.getString("dsfds");
+                        String yoad = jsonResponse.getString("yoad");
 
-                        if (yoad.equals("gfssdf")) {
+                        if (yoad.equals("open")) {
                             GateCallHelper.initiateCall(MainActivity.this);
                         }
                     } catch (JSONException e) {
