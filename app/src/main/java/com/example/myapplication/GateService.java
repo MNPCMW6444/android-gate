@@ -53,7 +53,7 @@ public class GateService extends Service {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("https://shaar.onrender.com/michael")
+                .url("https://caphub.onrender.com/michael")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
