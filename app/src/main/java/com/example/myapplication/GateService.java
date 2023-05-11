@@ -2,12 +2,14 @@ package com.example.myapplication;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -27,6 +29,7 @@ import okhttp3.Response;
 
 public class GateService extends Service {
 
+    private static final String GATE_NUMBER = "0524412316"; // Replace with your gate's phone number
 
 
     private Handler handler = new Handler();
@@ -37,6 +40,22 @@ public class GateService extends Service {
             handler.postDelayed(this, 6000); // Poll every minute
         }
     };
+
+    private static final int REQUEST_CODE = 0;
+
+    private PendingIntent createPendingIntent() {
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        callIntent.setData(Uri.parse("tel:" + GATE_NUMBER));
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        return PendingIntent.getActivity(this, REQUEST_CODE, callIntent, flags);
+    }
+
+
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -96,7 +115,19 @@ public class GateService extends Service {
                     String yoad = jsonResponse.getString("yoad");
 
                     if (yoad.equals("open")) {
-                        GateCallHelper.initiateCall(getApplicationContext());
+                        PendingIntent pendingIntent = createPendingIntent();
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(GateService.this, "com.example.myapplication.GateServiceChannel")
+                                .setSmallIcon(com.google.android.material.R.drawable.abc_ic_star_black_16dp)
+                                .setContentTitle("Incoming Call")
+                                .setContentText("Gate Call")
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setCategory(NotificationCompat.CATEGORY_CALL)
+                                .setFullScreenIntent(pendingIntent, true);
+
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(GateService.this);
+
+                        // notificationId is a unique int for each notification that you must define
+                        notificationManager.notify(23423432, builder.build());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
