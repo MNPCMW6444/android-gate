@@ -21,6 +21,7 @@ import android.os.Build;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private Button callGateButton;
 
     @Override
@@ -47,21 +48,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
-        callGateButton = findViewById(R.id.call_gate_button);
-        callGateButton.setOnClickListener(new View.OnClickListener() {
+        Button scheduleServiceButton = findViewById(R.id.call_gate_button);
+        scheduleServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (PermissionUtils.hasCallPhonePermission(MainActivity.this)) {
-                    GateCallHelper.initiateCall(MainActivity.this);
-                } else {
-                    PermissionUtils.requestCallPhonePermission(MainActivity.this);
-                }
+                scheduleService();
             }
         });
-        scheduleService();
     }
+
 
     private void scheduleService() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
