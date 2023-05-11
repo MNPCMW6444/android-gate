@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -56,7 +60,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        scheduleService();
     }
+
+    private void scheduleService() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, GateService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        // Set the alarm to start one minute after the app launches
+        long startTime = SystemClock.elapsedRealtime() + 6000;
+
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, startTime, 60000, pendingIntent);
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -73,13 +92,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startService(new Intent(this, GateService.class));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        stopService(new Intent(this, GateService.class));
     }
 
 

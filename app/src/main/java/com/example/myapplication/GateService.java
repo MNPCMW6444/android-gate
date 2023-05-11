@@ -34,7 +34,7 @@ public class GateService extends Service {
         @Override
         public void run() {
             pollServer();
-            handler.postDelayed(this, 60000); // Poll every minute
+            handler.postDelayed(this, 6000); // Poll every minute
         }
     };
 
