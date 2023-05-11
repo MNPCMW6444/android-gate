@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        Button scheduleServiceButton = findViewById(R.id.call_gate_button);
+        Button scheduleServiceButton = findViewById(R.id.caaaa);
         scheduleServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
