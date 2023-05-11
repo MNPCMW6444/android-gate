@@ -6,9 +6,11 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
-import com.example.myapplication.GateCallHelper;
-import com.example.myapplication.MainActivity;
+import android.app.Notification;
+import android.app.PendingIntent;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +23,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
 public class GateService extends Service {
+
+
 
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
@@ -34,9 +39,21 @@ public class GateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this, "com.example.myapplication.GateServiceChannel")
+                .setContentTitle("Gate Service")
+                .setContentText("Running...")
+                .setContentIntent(pendingIntent)
+                .build();
+
+        startForeground(1, notification);
+
         handler.postDelayed(runnable, 0);
         return START_STICKY;
     }
+
 
     @Override
     public void onDestroy() {
